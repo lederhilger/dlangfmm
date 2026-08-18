@@ -1,0 +1,7 @@
+{
+    "name": "dlangfmm",
+    "description": "D implementation of vortex filament FMM",
+    "authors": ["Simon Lederhilger"],
+    "license": "MIT",
+    "targetType": "executable"
+}
