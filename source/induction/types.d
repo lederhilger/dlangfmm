@@ -89,3 +89,8 @@ bool finite(Vectrix value) pure nothrow @nogc
 {
 	return isFinite(value.x) && isFinite(value.y) && isFinite(value.z);
 }
+
+size_t nmIndex(int n, int m) pure nothrow @nogc
+{
+	return cast(size_t)(n * n + n + m);
+}
