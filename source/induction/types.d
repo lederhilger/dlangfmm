@@ -94,3 +94,42 @@ size_t nmIndex(int n, int m) pure nothrow @nogc
 {
 	return cast(size_t)(n * n + n + m);
 }
+
+ulong keyBits(double value) pure nothrow @nogc
+{
+	if (value == 0.0) {value = 0.0;}
+	ulong bits;
+	memcpy(&bits, &value, bits.sizeof);
+	return bits;
+}
+
+struct GeometryKey
+{
+	ulong x, y, z;
+
+	this(Vectrix offset) pure nothrow @nogc
+	{
+		x = keyBits(offset.x);
+		y = keyBits(offset.y);
+		z = keyBits(offset.z);
+	}
+}
+
+struct TranslationKey
+{
+	Translation kind;
+	GeometryKey geometry;
+}
+
+struct CacheStats
+{
+	size_t entries;
+	size_t geometryEntries;
+	size_t sharedEntries;
+	size_t bytes;
+	size_t keyPayloadBytes;
+	size_t hits;
+	size_t misses;
+	size_t evictions;
+	size_t budgetBytes;
+}
