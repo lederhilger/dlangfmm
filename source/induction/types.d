@@ -133,3 +133,16 @@ struct CacheStats
 	size_t evictions;
 	size_t budgetBytes;
 }
+
+struct Filament
+{
+	uint start;
+	uint end;
+	double circulation = 0.0;
+}
+
+struct SourceSet
+{
+	const(Vectrix)[] vertices;
+	const(Filament)[] filaments;
+}
