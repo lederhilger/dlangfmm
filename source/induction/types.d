@@ -3,8 +3,11 @@ module induction.types;
 import core.stdc.string : memcpy;
 import std.complex : Complex;
 import std.math : isFinite, sqrt;
+import std.array : overlap;
 
 alias CDouble = Complex!double;
+enum maxOrder = 32;
+enum maxProfundity = 48;
 
 enum Formulation : ubyte
 {
@@ -93,6 +96,35 @@ bool finite(Vectrix value) pure nothrow @nogc
 size_t nmIndex(int n, int m) pure nothrow @nogc
 {
 	return cast(size_t)(n * n + n + m);
+}
+
+void validateOrder(int order) @safe
+{
+	enforce(order >= 1 && order <= maxOrder, "order must be in [1,...,32]");
+}
+
+package(induction) bool overlaps(const CDouble)[] buffer, const(CDouble)[][] others) @safe @nogc pure nothrow
+{
+	foreach(other; others)
+	{
+		if (overlap(buffer, other).length)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+package(induction) bool buffersOverlap(const(CDouble)[][] buffers) @safe @nogc pure nothrow
+{
+	foreach (index; 0 .. buffers.length)
+	{
+		if (overlaps(buffers[index], buffers[index + 1 .. $]))
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 ulong keyBits(double value) pure nothrow @nogc
