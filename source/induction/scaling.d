@@ -1,6 +1,6 @@
 module induction.scaling;
 
-import induction.types : finite;
+import induction.types : CDouble, finite;
 import std.math : sqrt, isFinite;
 import std.exception : enforce;
 
@@ -24,7 +24,7 @@ void checkScale(double value)
 double weight(int n, int m, int N, int M) @nogc pure nothrow
 {
 	double square = 1;
-	forach (sign; [-1, 1])
+	foreach (sign; [-1, 1])
 	{
 		int first = n + sign * m;
 		int second = N + sign * M;
