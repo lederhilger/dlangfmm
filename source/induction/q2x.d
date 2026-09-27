@@ -5,7 +5,7 @@ import std.math : PI, isFinite;
 import core.exception : onRangeError;
 import std.exception : enforce;
 import induction.scaling : weight, checkNumber, checkScale;
-import induction.types : CDouble, Vectrix, nmIndex, sub, norm, finite, bufferOverlap, maxOrder;
+import induction.types : CDouble, Vectrix, nmIndex, sub, norm, finite, buffersOverlap, maxOrder;
 
 @safe:
 
@@ -27,7 +27,7 @@ struct scratchQ2X
 
 void filamentQ2X(Vectrix x1, Vectrix x2, Vectrix center, int order, CDouble[] output, ref scratchQ2X scratch, double expansionScale = 1)
 {
-	if (order < 1 || order > maxOrder || output.length < cast(size_t)(order * order) || scratch.qPrevious.length < cast(size_t)(order + 1) || scratch.qCurrent.length < cast(size_t)(order + 1) || scratch.pPrevious.length < cast(size_t)(order + 1) || scratch.pCurrent.length < cast(size_t)(order + 1)
+	if (order < 1 || order > maxOrder || output.length < cast(size_t)(order * order) || scratch.qPrevious.length < cast(size_t)(order + 1) || scratch.qCurrent.length < cast(size_t)(order + 1) || scratch.pPrevious.length < cast(size_t)(order + 1) || scratch.pCurrent.length < cast(size_t)(order + 1))
 	{
 		onRangeError();
 	}
@@ -59,7 +59,6 @@ void filamentQ2X(Vectrix x1, Vectrix x2, Vectrix center, int order, CDouble[] ou
 	scratch.qPrevious[0] = CDouble(1, 0);
 	scratch.pPrevious[0] = CDouble(1, 0);
 	enforce(finite(r0) && finite(ru) && isFinite(coefficient), "geometry exceeds double");
-	double coefficient = sqrt(ru.x * ru.x + ru.y * ru.y + ru.z * ru.z) / (4.0 * PI);
 	output[0] = CDouble(coefficient, 0);
 
 	foreach (n; 1 .. order)
@@ -74,7 +73,7 @@ void filamentQ2X(Vectrix x1, Vectrix x2, Vectrix center, int order, CDouble[] ou
 		}
 		else
 		{
-			qCurrent[0] = imaginary * η * qPrevious[1] - imaginary * ξ * conj(qPrevious[1]) - axial * qPrevious[0];
+			qCurrent[0] = weight(n, 0, n - 1, 1) * imaginary * η * qPrevious[1] - imaginary * ξ * conj(qPrevious[1]) - n * axial * qPrevious[0];
 			qCurrent[0] /= n;
 		}
 		if (n > 1)
@@ -83,7 +82,7 @@ void filamentQ2X(Vectrix x1, Vectrix x2, Vectrix center, int order, CDouble[] ou
 			{
 				qCurrent[m] = weight(n, m, n - 1, m - 1) * imaginary * ξ * qPrevious[m - 1] - weight(n, m, n - 1, m) * axial * qPrevious[m];
 				if (m < n - 1)
-				   qCurrent[m] += weight(n, m, n - 1, n + 1) * imaginary * η * qPrevious[m + 1];
+				   qCurrent[m] += weight(n, m, n - 1, m + 1) * imaginary * η * qPrevious[m + 1];
 				qCurrent[m] /= n;
 			}
 		}
@@ -95,7 +94,7 @@ void filamentQ2X(Vectrix x1, Vectrix x2, Vectrix center, int order, CDouble[] ou
 		}
 		else
 		{
-			pCurrent[0] = weight(n, 0, n - 1, 1) * imaginary * η0 * pPrevious[1] - imaginary * ξ0 * conj(pPrevious[1]) - axial0 * pPrevious[0] + qCurrent[0];
+			pCurrent[0] = weight(n, 0, n - 1, 1) * (imaginary * η0 * pPrevious[1] - imaginary * ξ0 * conj(pPrevious[1])) - n * axial0 * pPrevious[0] + qCurrent[0];
 		}
 		pCurrent[0] /= n + 1;
 		if (n > 1)
