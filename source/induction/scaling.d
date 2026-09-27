@@ -1,7 +1,11 @@
 module induction.scaling;
 
 import induction.types : finite;
-import std.math : sqrt;
+import std.math : sqrt, isFinite;
+import std.exception : enforce;
+
+package(induction):
+@safe:
 
 void checkNumber(const(CDouble)[] values, string context)
 {
@@ -10,6 +14,11 @@ void checkNumber(const(CDouble)[] values, string context)
 	{
 		if (!finite(value)) throw new Exception(format("%s (coefficient %s)", context, i));
 	}
+}
+
+void checkScale(double value)
+{
+	enforce(isFinite(value) && value > 0, "scale must be positive and finite");
 }
 
 double weight(int n, int m, int N, int M) @nogc pure nothrow
